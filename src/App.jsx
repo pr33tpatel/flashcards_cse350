@@ -1,23 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { BookOpen, Brain, FileText, Upload, CheckCircle, XCircle, Sparkles, ChevronRight, RotateCcw, ArrowLeft, Terminal, Cpu, Code } from "lucide-react";
+import TerminalBox from "./components/TerminalBox.jsx";
+import TerminalButton from "./components/TerminalButton.jsx";
+import DashboardView from "./views/DashboardView.jsx";
+import ProcessingView from "./views/ProcessingView.jsx";
+import UploadView from "./views/UploadView.jsx";
 
 export default function App() {
   const [view, setView] = useState("upload"); // 'upload', 'processing', 'dashboard'
-  const [activeTab, setActiveTab] = useState("summary"); // 'notes', 'summary', 'quiz'
   const [inputText, setInputText] = useState("");
 
-  // Mock Data States
+  // Data States
   const [summaryPoints, setSummaryPoints] = useState([]);
   const [quizQuestions, setQuizQuestions] = useState([]);
 
-  // Quiz State
+  // Quiz Logic States
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [isCorrect, setIsCorrect] = useState(null);
   const [score, setScore] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
 
-  // Demo content to simulate "Upload"
+  // Demo content
   const demoText = `
 The Mitochondria is often referred to as the "powerhouse of the cell". It is a double-membrane-bound organelle found in most eukaryotic organisms. Some cells in some multicellular organisms may lack mitochondria (for example, mature mammalian red blood cells).
 
@@ -75,7 +79,6 @@ The primary function of mitochondria is to generate large quantities of energy i
       ]);
 
       setView("dashboard");
-      setActiveTab("summary");
     }, 2000);
   };
 
@@ -117,250 +120,8 @@ The primary function of mitochondria is to generate large quantities of energy i
     resetQuiz();
   };
 
-  // --- REUSABLE COMPONENTS ---
-
-  const TerminalBox = ({ title, children, className = "" }) => (
-    <div className={`relative border-2 border-red-800 bg-black/50 ${className}`}>
-      {title && <div className="absolute -top-3 left-4 px-2 bg-black border border-red-800 text-xs font-bold text-red-500 uppercase tracking-widest">{title}</div>}
-      <div className="p-6">{children}</div>
-      {/* Decorative corners */}
-      <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-red-500 -mt-0.5 -ml-0.5"></div>
-      <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-red-500 -mt-0.5 -mr-0.5"></div>
-      <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-red-500 -mb-0.5 -ml-0.5"></div>
-      <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-red-500 -mb-0.5 -mr-0.5"></div>
-    </div>
-  );
-
-  const TerminalButton = ({ onClick, disabled, children, primary }) => (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      className={`
-        px-6 py-3 font-mono text-sm tracking-wider uppercase transition-all duration-150 relative group
-        ${disabled ? "opacity-50 cursor-not-allowed" : "hover:translate-x-1 hover:-translate-y-1 active:translate-x-0 active:translate-y-0"}
-        ${
-          primary
-            ? "bg-red-600 text-black font-bold border-2 border-red-400 hover:bg-red-500 hover:shadow-[4px_4px_0px_0px_rgba(0,255,0,0.2)]"
-            : "bg-black text-red-500 border-2 border-red-700 hover:border-red-400 hover:text-red-400 hover:shadow-[4px_4px_0px_0px_rgba(0,100,0,0.5)]"
-        }
-      `}
-    >
-      <div className="flex items-center gap-2 justify-center">{children}</div>
-    </button>
-  );
-
-  // --- VIEWS ---
-
-  const UploadView = () => (
-    <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 animate-in fade-in duration-700">
-      <div className="w-full max-w-3xl">
-        <div className="mb-12 font-mono">
-          <div className="text-red-800 text-xs mb-2">System Status: ONLINE</div>
-          <h1 className="text-5xl md:text-6xl font-black text-red-500 mb-2 tracking-tighter">
-            FLASHCARDS<span className="animate-pulse">_</span>
-          </h1>
-          <p className="text-red-700 text-lg uppercase tracking-widest border-l-4 border-red-900 pl-4">AI-Powered Knowledge Extraction Protocol</p>
-        </div>
-
-        <TerminalBox title="INPUT_STREAM">
-          <textarea
-            className="w-full h-48 bg-black/50 border border-red-900 p-4 text-red-400 focus:border-red-500 focus:ring-1 focus:ring-red-500/50 outline-none resize-none font-mono placeholder-red-900 text-sm leading-relaxed"
-            placeholder="// Paste lecture notes or raw data buffer here..."
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-          />
-
-          <div className="flex flex-col sm:flex-row gap-4 mt-6">
-            <div className="flex-1">
-              <TerminalButton onClick={handleFileUpload}>
-                <Code className="w-4 h-4" />
-                LOAD_DEMO_DATA.dat
-              </TerminalButton>
-            </div>
-            <div className="flex-1">
-              <TerminalButton primary onClick={generateMaterial} disabled={!inputText}>
-                <Cpu className="w-4 h-4" />
-                EXECUTE_ANALYSIS
-              </TerminalButton>
-            </div>
-          </div>
-        </TerminalBox>
-
-        <div className="mt-4 text-center text-red-900 text-xs font-mono">v1.0.4 stable // waiting for input stream</div>
-      </div>
-    </div>
-  );
-
-  const ProcessingView = () => (
-    <div className="flex flex-col items-center justify-center min-h-[80vh] font-mono">
-      <div className="w-64">
-        <div className="mb-2 text-red-500 text-xs flex justify-between">
-          <span>PROCESSING</span>
-          <span>[busy]</span>
-        </div>
-        <div className="h-2 bg-red-900/30 w-full overflow-hidden border border-red-800">
-          <div className="h-full bg-red-500 animate-[pulse_1s_ease-in-out_infinite] w-full origin-left"></div>
-        </div>
-        <div className="mt-4 space-y-1 text-xs text-red-600">
-          <div className="animate-[fade-in_0.5s_ease-out_0.1s_both]">{">"} Parsing text buffer...</div>
-          <div className="animate-[fade-in_0.5s_ease-out_0.8s_both]">{">"} Identifying key entities...</div>
-          <div className="animate-[fade-in_0.5s_ease-out_1.5s_both]">{">"} Generating quiz vector matrix...</div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const DashboardView = () => (
-    <div className="max-w-5xl mx-auto px-4 py-8 font-mono">
-      {/* Header */}
-      <div className="flex flex-wrap gap-4 justify-between items-center mb-8 border-b-2 border-red-900 pb-4">
-        <div className="flex items-center gap-4">
-          <button onClick={resetApp} className="text-red-700 hover:text-red-400 hover:underline transition-colors flex items-center gap-1 text-sm uppercase">
-            <ArrowLeft className="w-4 h-4" />
-            ../BACK
-          </button>
-          <div>
-            <div className="text-red-800 text-xs uppercase tracking-wider">Current Directory</div>
-            <h1 className="text-xl font-bold text-red-400">/BIOLOGY_101/CELL_STRUCTURE</h1>
-          </div>
-        </div>
-        <div className="flex gap-2">
-          <div className="w-3 h-3 rounded-full bg-red-900"></div>
-          <div className="w-3 h-3 rounded-full bg-yellow-900"></div>
-          <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-        {/* Sidebar Tabs */}
-        <div className="col-span-1 space-y-2">
-          {["notes", "summary", "quiz"].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`w-full text-left px-4 py-3 border-l-2 transition-all duration-200 uppercase text-sm tracking-wider flex items-center justify-between group ${
-                activeTab === tab ? "border-red-500 bg-red-900/20 text-red-400 pl-6" : "border-red-900 text-red-700 hover:text-red-500 hover:border-red-600 hover:pl-5"
-              }`}
-            >
-              <span>{tab}</span>
-              {activeTab === tab && <ChevronRight className="w-4 h-4 animate-pulse" />}
-            </button>
-          ))}
-        </div>
-
-        {/* Content Area */}
-        <div className="col-span-1 md:col-span-3">
-          <TerminalBox className="min-h-[500px]" title={`VIEWING: ${activeTab.toUpperCase()}`}>
-            {activeTab === "notes" && (
-              <div className="animate-in fade-in duration-300">
-                <div className="prose prose-invert max-w-none text-red-300 leading-relaxed font-mono whitespace-pre-line text-sm">{inputText}</div>
-              </div>
-            )}
-
-            {activeTab === "summary" && (
-              <div className="animate-in fade-in duration-300">
-                <div className="space-y-4">
-                  {summaryPoints.map((point, idx) => (
-                    <div key={idx} className="flex gap-4 group">
-                      <div className="flex-shrink-0 text-red-600 group-hover:text-red-400 transition-colors font-bold select-none">[{String(idx + 1).padStart(2, "0")}]</div>
-                      <p className="text-red-300 group-hover:text-red-100 transition-colors text-sm leading-relaxed">{point}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {activeTab === "quiz" && (
-              <div className="animate-in fade-in duration-300 max-w-2xl mx-auto">
-                {!quizCompleted ? (
-                  <>
-                    <div className="flex justify-between items-end mb-8 border-b border-red-900 pb-4">
-                      <div>
-                        <span className="text-red-700 text-xs uppercase block mb-1">Question Sequence</span>
-                        <span className="text-2xl text-red-400 font-bold">
-                          {String(currentQuestionIndex + 1).padStart(2, "0")}
-                          <span className="text-red-800 text-lg"> / {String(quizQuestions.length).padStart(2, "0")}</span>
-                        </span>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-red-700 text-xs uppercase block mb-1">Current Score</span>
-                        <span className="text-xl text-red-400 font-bold">{score * 100} PTS</span>
-                      </div>
-                    </div>
-
-                    <h3 className="text-lg text-red-100 mb-8 leading-relaxed border-l-2 border-red-600 pl-4 py-2 bg-red-900/10">{quizQuestions[currentQuestionIndex].question}</h3>
-
-                    <div className="space-y-3">
-                      {quizQuestions[currentQuestionIndex].options.map((option, idx) => {
-                        let btnClass = "w-full p-4 text-left border transition-all duration-200 flex justify-between items-center group relative overflow-hidden ";
-
-                        if (selectedAnswer === null) {
-                          btnClass += "border-red-900 hover:border-red-500 hover:bg-red-900/20 text-red-400";
-                        } else if (selectedAnswer === idx) {
-                          btnClass += isCorrect ? "border-red-500 bg-red-500 text-black font-bold" : "border-red-500 bg-red-900/50 text-red-500";
-                        } else if (idx === quizQuestions[currentQuestionIndex].correct && selectedAnswer !== null) {
-                          btnClass += "border-red-500 text-red-500 animate-pulse";
-                        } else {
-                          btnClass += "border-red-900/50 text-red-800 opacity-50";
-                        }
-
-                        return (
-                          <button key={idx} onClick={() => handleAnswerClick(idx)} disabled={selectedAnswer !== null} className={btnClass}>
-                            <span className="flex items-center gap-3 relative z-10">
-                              <span className="text-xs opacity-50 font-bold">[{String.fromCharCode(65 + idx)}]</span>
-                              {option}
-                            </span>
-
-                            {/* Hover effect scanline */}
-                            {selectedAnswer === null && <div className="absolute inset-0 bg-red-500/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300"></div>}
-
-                            {selectedAnswer === idx && (isCorrect ? <CheckCircle className="w-5 h-5 relative z-10" /> : <XCircle className="w-5 h-5 relative z-10" />)}
-                          </button>
-                        );
-                      })}
-                    </div>
-
-                    {selectedAnswer !== null && (
-                      <div className="mt-8 flex justify-end">
-                        <TerminalButton primary onClick={nextQuestion}>
-                          {currentQuestionIndex < quizQuestions.length - 1 ? "NEXT_SEQUENCE >>" : "FINALIZE_REPORT"}
-                        </TerminalButton>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="text-center py-12">
-                    <div className="inline-block p-6 border-2 border-red-500 rounded-full mb-6 relative">
-                      <Brain className="w-16 h-16 text-red-500" />
-                      <div className="absolute inset-0 bg-red-500/20 blur-xl rounded-full"></div>
-                    </div>
-                    <h2 className="text-3xl font-bold text-red-400 mb-2 tracking-tight">ANALYSIS COMPLETE</h2>
-                    <div className="text-red-700 mb-8 font-mono">
-                      Final Accuracy: <span className="text-red-400 font-bold">{Math.round((score / quizQuestions.length) * 100)}%</span>
-                    </div>
-
-                    <div className="flex justify-center gap-4">
-                      <TerminalButton onClick={resetQuiz}>
-                        <RotateCcw className="w-4 h-4" />
-                        RETRY
-                      </TerminalButton>
-                      <TerminalButton primary onClick={() => setActiveTab("summary")}>
-                        <BookOpen className="w-4 h-4" />
-                        REVIEW_LOGS
-                      </TerminalButton>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </TerminalBox>
-        </div>
-      </div>
-    </div>
-  );
-
   return (
-    <div className="min-h-screen bg-black font-mono text-red-500 selection:bg-red-500 selection:text-black overflow-x-hidden">
+    <div className="min-h-screen bg-black font-mono text-green-500 selection:bg-green-500 selection:text-black overflow-x-hidden">
       {/* Background Grid Effect */}
       <div
         className="fixed inset-0 pointer-events-none"
@@ -374,9 +135,26 @@ The primary function of mitochondria is to generate large quantities of energy i
       <div className="fixed inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-50 bg-[length:100%_2px,3px_100%]"></div>
 
       <div className="relative z-10">
-        {view === "upload" && <UploadView />}
+        {view === "upload" && <UploadView inputText={inputText} setInputText={setInputText} onUploadDemo={handleFileUpload} onGenerate={generateMaterial} />}
+
         {view === "processing" && <ProcessingView />}
-        {view === "dashboard" && <DashboardView />}
+
+        {view === "dashboard" && (
+          <DashboardView
+            inputText={inputText}
+            summaryPoints={summaryPoints}
+            quizQuestions={quizQuestions}
+            currentQuestionIndex={currentQuestionIndex}
+            score={score}
+            selectedAnswer={selectedAnswer}
+            isCorrect={isCorrect}
+            quizCompleted={quizCompleted}
+            onAnswerClick={handleAnswerClick}
+            onNextQuestion={nextQuestion}
+            onResetQuiz={resetQuiz}
+            onResetApp={resetApp}
+          />
+        )}
       </div>
     </div>
   );
