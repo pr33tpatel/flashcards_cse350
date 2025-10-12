@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { BookOpen, Brain, FileText, Upload, CheckCircle, XCircle, Sparkles, ChevronRight, RotateCcw, ArrowLeft, Terminal, Cpu, Code } from "lucide-react";
 import TerminalBox from "./components/TerminalBox.jsx";
 import TerminalButton from "./components/TerminalButton.jsx";
+import { THEMES } from "./utils/theme";
 import DashboardView from "./views/DashboardView.jsx";
 import ProcessingView from "./views/ProcessingView.jsx";
 import UploadView from "./views/UploadView.jsx";
@@ -9,6 +10,9 @@ import UploadView from "./views/UploadView.jsx";
 export default function App() {
   const [view, setView] = useState("upload"); // 'upload', 'processing', 'dashboard'
   const [inputText, setInputText] = useState("");
+
+  const [currentTheme, setCurrentTheme] = useState("red");
+  const theme = THEMES[currentTheme]; // Helper object for current theme
 
   // Data States
   const [summaryPoints, setSummaryPoints] = useState([]);
