@@ -18,7 +18,7 @@ const DashboardView = ({ inputText, summaryPoints, quizQuestions, currentQuestio
           </button>
           <div>
             <div className="text-green-800 text-xs uppercase tracking-wider">Current Directory</div>
-            <h1 className="text-xl font-bold text-green-400">/BIOLOGY_101/CELL_STRUCTURE</h1>
+            <h1 className="text-xl font-bold text-green-400"></h1>
           </div>
         </div>
         <div className="flex gap-2">

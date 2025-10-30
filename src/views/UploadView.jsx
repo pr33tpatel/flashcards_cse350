@@ -10,7 +10,7 @@ const UploadView = ({ inputText, setInputText, onUploadDemo, onGenerate }) => {
         <div className="mb-12 font-mono">
           <div className="text-green-800 text-xs mb-2">System Status: ONLINE</div>
           <h1 className="text-5xl md:text-6xl font-black text-green-500 mb-2 tracking-tighter">
-            STUDY_BUDDY<span className="animate-pulse">_</span>
+            FLASHCARDS<span className="animate-pulse">_</span>
           </h1>
           <p className="text-green-700 text-lg uppercase tracking-widest border-l-4 border-green-900 pl-4">AI-Powered Knowledge Extraction Protocol</p>
         </div>
