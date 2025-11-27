@@ -45,7 +45,9 @@ The primary function of mitochondria is to generate large quantities of energy i
     setView("processing");
 
     try {
-      const response = await fetch("http://localhost:5000/api/generate", {
+      // const response = await fetch("http://localhost:5000/api/generate", {
+      const API_URL = import.meta.env.VITE_API_KEY || "http://localhost:5000/api/generate";
+      const response = await fetch(API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
