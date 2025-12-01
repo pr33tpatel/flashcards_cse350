@@ -35,9 +35,14 @@ const DashboardView = ({ inputText, summaryPoints, quizQuestions, currentQuestio
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`w-full text-left px-4 py-3 border-l-2 transition-all duration-200 uppercase text-sm tracking-wider flex items-center justify-between group ${
-                activeTab === tab ? "border-green-500 bg-green-900/20 text-green-400 pl-6" : "border-green-900 text-green-700 hover:text-green-500 hover:border-green-600 hover:pl-5"
-              }`}
+              className={`w-full text-left px-4 py-3 border-l-2 transition-all 
+                duration-200 uppercase text-sm tracking-wider flex items-center 
+                justify-between group ${
+                  activeTab === tab
+                    ? "border-green-500 bg-green-900/20 text-green-400 pl-6"
+                    : `border-green-900 text-green-700 hover:text-green-500 
+                hover:border-green-600 hover:pl-5`
+                }`}
             >
               <span>{tab}</span>
               {activeTab === tab && <ChevronRight className="w-4 h-4 animate-pulse" />}

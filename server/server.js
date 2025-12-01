@@ -16,6 +16,10 @@ const limiter = rateLimit({
   message: "Too many requests from this IP, please try again after a minute",
 });
 
+app.get("/api/generate", async (req, res) => {
+  res.status(200).json({ status: "awake", message: "server is ready" });
+});
+
 app.post("/api/generate", limiter, async (req, res) => {
   try {
     const { text } = req.body;
@@ -27,7 +31,6 @@ app.post("/api/generate", limiter, async (req, res) => {
     // 1. Select the model
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-    // 2. The Prompt - Strict instructions for JSON format
     const prompt = `
       You are an AI study assistant. 
       Analyze the following notes and generate a study summary and a quiz.
@@ -52,12 +55,11 @@ app.post("/api/generate", limiter, async (req, res) => {
       ${text}
     `;
 
-    // 3. Call API
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const textData = response.text();
 
-    // 4. Clean and Parse JSON
+    // Clean and Parse JSON
     // Sometimes AI adds markdown backticks, we clean them just in case
     const cleanedText = textData
       .replace(/```json/g, "")
