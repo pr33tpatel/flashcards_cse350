@@ -7,6 +7,8 @@ const app = express();
 app.use(cors()); // Allow frontend to talk to backend
 app.use(express.json());
 
+app.set("trust proxy", 1); // Trust first proxy for rate limiting
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const rateLimit = require("express-rate-limit");
